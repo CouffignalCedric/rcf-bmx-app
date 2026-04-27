@@ -55,17 +55,31 @@ input {
 
 /* LE STYLE CALENDRIER (L'élément qui manquait) */
 .calendar-item {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
-  background: white;
-  padding: 15px;
-  border-radius: 16px;
-  margin-bottom: 15px;
+  gap: 15px;
   cursor: pointer;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+  border-left: 5px solid var(--primary);
+  /* 👇 AJOUTE CETTE LIGNE pour forcer le texte en noir sur fond blanc */
+  color: #1a1a1a; 
 }
-
+.calendar-item h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #1a1a1a; /* Noir profond pour le titre */
+}
+.race-location {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555; /* Gris foncé pour la ville */
+  margin-top: 4px;
+}
 .calendar-date {
   display: flex;
   flex-direction: column;
