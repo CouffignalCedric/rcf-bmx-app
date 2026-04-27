@@ -1,0 +1,197 @@
+:root {
+  --primary: #e11d48; /* Rouge Racing Club */
+  --dark: #000000;    /* Noir profond */
+  --bg: #111111;      /* Fond sombre pour faire ressortir les cartes */
+  --text-main: #ffffff;
+  --blue-cal: #e11d48; /* On utilise aussi le rouge pour le calendrier */
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--dark);
+}
+
+header {
+  background: black;
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* SECTION ADRESSE */
+.address-section {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  border-left: 5px solid var(--primary);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+/* LE STYLE CALENDRIER (L'élément qui manquait) */
+.calendar-item {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 15px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.calendar-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  border-right: 2px solid #f1f5f9;
+  margin-right: 15px;
+  padding-right: 10px;
+}
+
+.calendar-day {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--dark);
+  line-height: 1;
+}
+
+.calendar-month {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--blue-cal);
+  text-transform: uppercase;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+/* ADMIN FORM */
+.admin-card {
+  background: #f1f5f9;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  border: 2px dashed #cbd5e1;
+}
+
+.btn-add {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  padding: 25px;
+  border-radius: 25px 25px 0 0;
+}
+
+.grid-btns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.nav-link {
+  text-decoration: none;
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: black;
+  border: 1px solid #e2e8f0;
+}
+
+/* On force le texte à l'intérieur du bloc noir à être blanc */
+.modal-destination-block {
+    background-color: #1a1a1a; /* Un gris très sombre, pas noir pur, pour un meilleur contraste */
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #333; /* Une bordure fine pour structurer */
+}
+
+.modal-destination-label {
+    font-size: 11px;
+    color: #888; /* Le label reste gris clair */
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.modal-destination-value {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700; /* Gras */
+    color: #ffffff;   /* Blanc pur, parfaitement lisible */
+    text-transform: capitalize; /* Juste la première lettre en majuscule */
+}
+/* Style pour les événements passés */
+.event-past {
+  opacity: 0.6; /* Rend la carte un peu transparente */
+  border-left: 5px solid #333 !important; /* Change la bordure rouge en gris */
+  filter: grayscale(0.8); /* Atténue les couleurs */
+}
+
+.event-past:hover {
+  transform: none; /* Désactive l'effet de zoom pour les vieux événements */
+  border-color: #444;
+}

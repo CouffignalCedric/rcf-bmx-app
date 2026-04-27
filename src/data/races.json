@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Coupe de France - Manche 1",
+    "date": "2026-03-15",
+    "time": "09:00",
+    "location": "Stade Bordelais BMX, 33000 Bordeaux",
+    "region": "Nouvelle-Aquitaine",
+    "category": "National"
+  },
+  {
+    "id": 2,
+    "name": "Championnat Régional AURA",
+    "date": "2026-04-10",
+    "time": "08:30",
+    "location": "Piste de BMX de Sarrians, 84260 Sarrians",
+    "region": "Sud",
+    "category": "Régional"
+  }
+]
