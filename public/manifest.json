@@ -1,0 +1,20 @@
+{
+  "short_name": "RCF BMX",
+  "name": "Racing Club Fagnières BMX",
+  "icons": [
+    {
+      "src": "logoRCF.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logoRCF.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1a1a1a",
+  "background_color": "#1a1a1a"
+}

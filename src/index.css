@@ -1,211 +1,63 @@
-:root {
-  --primary: #e11d48; /* Rouge Racing Club */
-  --dark: #000000;    /* Noir profond */
-  --bg: #111111;      /* Fond sombre pour faire ressortir les cartes */
-  --text-main: #ffffff;
-  --blue-cal: #e11d48; /* On utilise aussi le rouge pour le calendrier */
+:root { --rcf-red: #CC0000; --rcf-bg: #0f172a; }
+
+body { margin: 0; background-color: var(--rcf-bg); font-family: -apple-system, system-ui, sans-serif; color: white; overflow-x: hidden; }
+
+.m-app { max-width: 500px; margin: 0 auto; min-height: 100vh; }
+
+.m-header { text-align: center; padding: calc(env(safe-area-inset-top) + 25px) 20px 10px; }
+.m-logo-img { width: 70px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.m-header h1 { font-size: 22px; margin: 0; font-weight: 900; }
+.m-red { color: var(--rcf-red); }
+
+.m-content { padding: 0 15px 120px; }
+
+.m-filter-row { display: flex; gap: 10px; margin: 20px 0; }
+.m-select-ui { flex: 2; background: #1e293b; color: white; border: 1px solid #334155; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 14px; }
+.m-btn-ui { flex: 1; background: #1e293b; color: #94a3b8; border: 1px solid #334155; border-radius: 12px; font-weight: 800; font-size: 11px; text-transform: uppercase; }
+.m-btn-ui.active { background: var(--rcf-red); color: white; border-color: var(--rcf-red); }
+
+.m-event-card { 
+  display: flex; background: white; border-radius: 20px; margin-bottom: 15px; 
+  padding: 15px; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bg);
-  color: var(--dark);
+.m-event-date { display: flex; flex-direction: column; align-items: center; min-width: 60px; background: #f8fafc; border-radius: 12px; padding: 8px; margin-right: 15px; }
+.m-event-day { font-size: 1.5rem; font-weight: 900; color: #1e293b; line-height: 1; }
+.m-event-month { font-size: 0.7rem; font-weight: 800; margin-top: 2px; }
+
+.m-event-info { flex: 1; }
+.m-event-tag { font-size: 9px; color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; text-transform: uppercase; }
+.m-event-info h4 { margin: 5px 0 2px; color: #0f172a; font-size: 15px; font-weight: 800; text-transform: uppercase; }
+.m-event-info p { margin: 0; color: #64748b; font-size: 13px; font-weight: 600; }
+
+/* MODALE FORMAT MOBILE (CENTRE SUR PC) */
+.m-modal-backdrop { 
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+  display: flex; align-items: flex-end; justify-content: center; 
+  z-index: 1000; backdrop-filter: blur(5px); 
 }
 
-header {
-  background: black;
-  color: white;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+.m-modal-drawer { 
+  background: white; width: 100%; max-width: 480px; 
+  border-radius: 25px 25px 0 0; padding: 15px 20px calc(env(safe-area-inset-bottom) + 30px); 
+  color: #1e293b; animation: slideUp 0.3s ease-out; 
 }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.m-modal-bar { width: 40px; height: 4px; background: #e2e8f0; margin: 0 auto 15px; border-radius: 2px; }
 
-header h1 {
-  margin: 0;
-  font-style: italic;
-  font-weight: 900;
-  letter-spacing: -1px;
-}
+.m-modal-sub { margin-top: -10px; margin-bottom: 15px; font-size: 13px; color: #64748b; text-transform: capitalize; }
 
-.container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
+/* STYLE POUR LA COLONNE INFORMATION */
+.m-modal-description { 
+  background: #f1f5f9; border-radius: 12px; padding: 12px; 
+  margin-bottom: 15px; font-size: 14px; color: #334155; line-height: 1.4;
 }
+.m-modal-description strong { display: block; font-size: 10px; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
 
-/* SECTION ADRESSE */
-.address-section {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  border-left: 5px solid var(--primary);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  margin-bottom: 25px;
-}
+.m-modal-map { border-radius: 15px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; height: 180px; }
 
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-}
+.m-modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.m-action-btn { display: flex; align-items: center; justify-content: center; padding: 12px 5px; border-radius: 12px; text-decoration: none; color: white; font-weight: 900; font-size: 12px; }
+.maps { background: #4285F4; } .waze { background: #33ccff; } .dodo { background: #FF5A5F; }
 
-/* LE STYLE CALENDRIER (L'élément qui manquait) */
-.calendar-item {
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  transition: transform 0.2s;
-  border-left: 5px solid var(--primary);
-  /* 👇 AJOUTE CETTE LIGNE pour forcer le texte en noir sur fond blanc */
-  color: #1a1a1a; 
-}
-.calendar-item h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #1a1a1a; /* Noir profond pour le titre */
-}
-.race-location {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #555; /* Gris foncé pour la ville */
-  margin-top: 4px;
-}
-.calendar-date {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 60px;
-  border-right: 2px solid #f1f5f9;
-  margin-right: 15px;
-  padding-right: 10px;
-}
-
-.calendar-day {
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--dark);
-  line-height: 1;
-}
-
-.calendar-month {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--blue-cal);
-  text-transform: uppercase;
-}
-
-.badge {
-  font-size: 10px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  display: inline-block;
-  margin-bottom: 5px;
-}
-
-/* ADMIN FORM */
-.admin-card {
-  background: #f1f5f9;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 25px;
-  border: 2px dashed #cbd5e1;
-}
-
-.btn-add {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  width: 100%;
-  cursor: pointer;
-}
-
-/* MODAL */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 100;
-}
-
-.modal-content {
-  background: white;
-  width: 100%;
-  max-width: 500px;
-  padding: 25px;
-  border-radius: 25px 25px 0 0;
-}
-
-.grid-btns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.nav-link {
-  text-decoration: none;
-  text-align: center;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 12px;
-  background: #f8fafc;
-  color: black;
-  border: 1px solid #e2e8f0;
-}
-
-/* On force le texte à l'intérieur du bloc noir à être blanc */
-.modal-destination-block {
-    background-color: #1a1a1a; /* Un gris très sombre, pas noir pur, pour un meilleur contraste */
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #333; /* Une bordure fine pour structurer */
-}
-
-.modal-destination-label {
-    font-size: 11px;
-    color: #888; /* Le label reste gris clair */
-    margin: 0 0 5px 0;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-.modal-destination-value {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700; /* Gras */
-    color: #ffffff;   /* Blanc pur, parfaitement lisible */
-    text-transform: capitalize; /* Juste la première lettre en majuscule */
-}
-/* Style pour les événements passés */
-.event-past {
-  opacity: 0.6; /* Rend la carte un peu transparente */
-  border-left: 5px solid #333 !important; /* Change la bordure rouge en gris */
-  filter: grayscale(0.8); /* Atténue les couleurs */
-}
-
-.event-past:hover {
-  transform: none; /* Désactive l'effet de zoom pour les vieux événements */
-  border-color: #444;
-}
+.m-btn-close { width: 100%; padding: 15px; border: none; background: #f1f5f9; border-radius: 15px; color: #64748b; font-weight: bold; cursor: pointer; }

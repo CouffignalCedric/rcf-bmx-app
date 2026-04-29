@@ -3,252 +3,121 @@ import Papa from 'papaparse';
 import logoRCF from './assets/logoRCF.jpg';
 
 const App = () => {
-  const [userAddress, setUserAddress] = useState(localStorage.getItem('userAddress') || '');
   const [races, setRaces] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
   const [selectedRace, setSelectedRace] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPast, setShowPast] = useState(false);
+  const [filterCategory, setFilterCategory] = useState('Tous');
 
-  // Ton lien Google Sheet (CSV)
+  // URL de ton Google Sheets
   const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7VH4zr6IQ7agsL5OJNsZnuI1u_U1rwMqllWnxF8gbVh0JF71wJQqxDoD24EkBhdKijm6_XtyDML2W/pub?output=csv";
 
-  // 1. Gestion de l'autocomplétion d'adresse
-  const handleAddressChange = async (query) => {
-    setUserAddress(query);
-    if (query.length > 3) {
-      try {
-        const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
-        const data = await response.json();
-        setSuggestions(data.features);
-      } catch (error) {
-        console.error("Erreur API Adresse", error);
-      }
-    } else {
-      setSuggestions([]);
-    }
+  // FONCTION UNIQUE POUR LES COULEURS
+  const getCategoryColor = (categoryName) => {
+    const cat = categoryName?.toLowerCase() || '';
+    
+    if (cat.includes('internationnal')) return '#8b5cf6'; // Violet
+    if (cat.includes('national'))      return '#ef4444'; // Rouge
+    if (cat.includes('régional'))      return '#3b82f6'; // Bleu
+    if (cat.includes('départemental')) return '#10b981'; // Vert
+    
+    return '#64748b'; // Gris par défaut
   };
 
-  const selectSuggestion = (label) => {
-    setUserAddress(label);
-    localStorage.setItem('userAddress', label);
-    setSuggestions([]);
-  };
-
-  // 2. Chargement des données du club
   useEffect(() => {
     Papa.parse(SHEET_URL, {
-      download: true,
-      header: true,
+      download: true, header: true, skipEmptyLines: true,
       complete: (results) => {
-        const cleanData = results.data.filter(row => row.name);
-        setRaces(cleanData);
-        setLoading(false);
-      },
-      error: (error) => {
-        console.error("Erreur Google Sheet:", error);
+        const normalizedData = results.data.map(row => {
+          const newRow = {};
+          // On normalise les clés du CSV (minuscules et sans espaces)
+          Object.keys(row).forEach(key => { newRow[key.toLowerCase().trim()] = row[key]; });
+          return newRow;
+        }).filter(row => row.name && row.date);
+        setRaces(normalizedData);
         setLoading(false);
       }
     });
   }, []);
 
-  // 3. Formatage de la date pour le carré calendrier
-  const getCalDate = (dateStr) => {
-    if (!dateStr) return { day: '?', month: '?' };
-    const parts = dateStr.split('/');
-    const d = parts.length === 3 
-      ? new Date(parts[2], parts[1] - 1, parts[0]) 
-      : new Date(dateStr);
-    
-    return {
-      day: d.getDate(),
-      month: d.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase().replace('.', '')
-    };
-  };
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Filtrage et tri
+  const filteredRaces = races.filter(race => {
+    const matchCat = filterCategory === 'Tous' || race.category === filterCategory;
+    const raceDate = new Date(race.date);
+    return showPast ? matchCat : (raceDate >= today && matchCat);
+  }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const categories = ['Tous', ...new Set(races.map(r => r.category))];
 
   return (
-    <div>
-      <header>
-        <img src={logoRCF} alt="Logo RCF" style={{ width: '80px', marginBottom: '10px' }} />
-        <h1>Racing Club <span style={{ color: 'var(--primary)' }}>Fagnières</span></h1>
-        <p style={{ color: 'var(--primary)', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase' }}>
-          Calendrier des événements du club
-        </p>
+    <div className="m-app">
+      <header className="m-header">
+        <img src={logoRCF} alt="RCF" className="m-logo-img" />
+        <h1>RCF <span className="m-red">Fagnières</span></h1>
       </header>
 
-      <div className="container">
-        {/* SECTION ADRESSE */}
-        <div className="address-section" style={{ position: 'relative' }}>
-          <label style={{ fontWeight: 'bold', fontSize: '14px' }}>📍 Mon point de départ :</label>
-          <input 
-            type="text" 
-            placeholder="Tapez votre adresse pour le calcul..."
-            value={userAddress}
-            onChange={(e) => handleAddressChange(e.target.value)}
-          />
-          {suggestions.length > 0 && (
-            <ul className="suggestions-list">
-              {suggestions.map((s, index) => (
-                <li key={index} className="suggestion-item" onClick={() => selectSuggestion(s.properties.label)}>
-                  {s.properties.label}
-                </li>
-              ))}
-            </ul>
-          )}
+      <div className="m-content">
+        <div className="m-filter-row">
+          <select onChange={(e) => setFilterCategory(e.target.value)} className="m-select-ui">
+            {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+          <button onClick={() => setShowPast(!showPast)} className={`m-btn-ui ${showPast ? 'active' : ''}`}>
+            {showPast ? "Archives" : "À venir"}
+          </button>
         </div>
 
-        <h3 style={{ marginBottom: '20px' }}>Calendrier Officiel</h3>
-
-        {loading ? (
-          <p style={{ textAlign: 'center', color: '#64748b' }}>Chargement des courses...</p>
-        ) : (
-          races.sort((a, b) => {
-            const dateA = a.date.split('/').reverse().join('-');
-            const dateB = b.date.split('/').reverse().join('-');
-            return new Date(dateA) - new Date(dateB);
-          }).map(race => {
-            const cal = getCalDate(race.date);
-            
-            // Logique de détection "Événement Passé"
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const parts = race.date.split('/');
-            const eventDate = parts.length === 3 
-              ? new Date(parts[2], parts[1] - 1, parts[0]) 
-              : new Date(race.date);
-            const isPast = eventDate < today;
-
-            return (
-              <div 
-                key={race.id} 
-                className={`calendar-item ${isPast ? 'event-past' : ''}`} 
-                onClick={() => setSelectedRace(race)}
-              >
-                <div className="calendar-date">
-                  <span className="calendar-month">{cal.month}</span>
-                  <span className="calendar-day">{cal.day}</span>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span className="badge" style={{ 
-                      background: isPast ? '#333' : (race.category === 'National' ? '#CC0000' : '#444'),
-                      color: isPast ? '#888' : '#fff'
-                    }}>
-                      {isPast ? '✅ Terminé' : race.category}
-                    </span>
-                    <p className="race-details-sub">🕒 {race.time}</p>
-                  </div>
-                  
-                  <h4 style={{ 
-                    fontSize: '16px', 
-                    margin: '5px 0', 
-                    textDecoration: isPast ? 'line-through' : 'none',
-                    color: isPast ? '#666' : '#fff' 
-                  }}>
-                    {race.name}
-                  </h4>
-                  
-                  <span className="race-location" style={{ color: isPast ? '#555' : '#fff' }}>
-                    📍 {race.location}
-                  </span>
-                </div>
+        {loading ? <div className="m-loader">Chargement...</div> : (
+          filteredRaces.map((race, index) => (
+            <div key={index} className="m-event-card" onClick={() => setSelectedRace(race)} style={{ borderLeft: `6px solid ${getCategoryColor(race.category)}` }}>
+              <div className="m-event-date">
+                <span className="m-event-day">{new Date(race.date).getDate()}</span>
+                <span className="m-event-month" style={{ color: getCategoryColor(race.category) }}>
+                  {new Date(race.date).toLocaleDateString('fr-FR', {month: 'short'}).toUpperCase()}
+                </span>
               </div>
-            );
-          })
+              <div className="m-event-info">
+                <span className="m-event-tag" style={{ background: getCategoryColor(race.category) }}>{race.category}</span>
+                <h4>{race.name}</h4>
+                <p>📍 {race.location}</p>
+              </div>
+            </div>
+          ))
         )}
       </div>
 
-{/* MODAL DE DÉTAILS */}
-      {selectedRace && (() => {
-        // Logique pour vérifier si la date est passée
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const parts = selectedRace.date.split('/');
-        const eventDate = parts.length === 3 
-          ? new Date(parts[2], parts[1] - 1, parts[0]) 
-          : new Date(selectedRace.date);
-        const isPast = eventDate < today;
-
-        return (
-          <div className="modal-overlay" onClick={() => setSelectedRace(null)}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-              <button className="btn-close" onClick={() => setSelectedRace(null)}>✕</button>
-              
-              {/* Message d'alerte si l'événement est passé */}
-              {isPast && (
-                <div style={{
-                  background: '#222',
-                  color: '#ff4444', // Rouge un peu plus sombre pour le passé
-                  padding: '10px',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                  fontSize: '11px',
-                  fontWeight: '900',
-                  marginBottom: '15px',
-                  border: '1px solid #333',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
-                  🏁 Événement terminé
-                </div>
-              )}
-
-              <h2 style={{ 
-                margin: '0 0 10px 0', 
-                textDecoration: isPast ? 'line-through' : 'none',
-                opacity: isPast ? 0.5 : 1,
-                fontSize: '20px'
-              }}>
-                {selectedRace.name}
-              </h2>
-              
-              <p style={{ 
-                color: isPast ? '#666' : 'var(--primary)', 
-                fontWeight: 'bold', 
-                marginBottom: '20px',
-                fontSize: '14px'
-              }}>
-                {selectedRace.date}
-              </p>
-
-              <div className="modal-destination-block" style={{ 
-                opacity: isPast ? 0.4 : 1,
-                border: isPast ? '1px dashed #444' : '1px solid #333'
-              }}>
-                <p className="modal-destination-label">DESTINATION</p>
-                <p className="modal-destination-value">{selectedRace.location}</p>
+      {selectedRace && (
+        <div className="m-modal-backdrop" onClick={() => setSelectedRace(null)}>
+          <div className="m-modal-drawer" onClick={e => e.stopPropagation()}>
+            <div className="m-modal-bar"></div>
+            <h3>{selectedRace.name}</h3>
+            <p className="m-modal-sub">
+                {new Date(selectedRace.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </p>
+            
+            {/* AFFICHAGE DE LA COLONNE INFORMATION */}
+            {selectedRace.information && (
+              <div className="m-modal-description">
+                <strong>Information :</strong>
+                {selectedRace.information}
               </div>
+            )}
 
-              {/* Grise les boutons si c'est passé */}
-              <div className="grid-btns" style={{ 
-                filter: isPast ? 'grayscale(1) opacity(0.5)' : 'none',
-                pointerEvents: isPast ? 'none' : 'auto' // Optionnel : désactive les clics si passé
-              }}>
-                <a className="nav-link" target="_blank" rel="noreferrer" href={`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(userAddress)}&destination=${encodeURIComponent(selectedRace.location)}`}>🗺️ Trajet</a>
-                <a className="nav-link" target="_blank" rel="noreferrer" href={`https://waze.com/ul?q=${encodeURIComponent(selectedRace.location)}&navigate=yes`}>🚙 Waze</a>
-                <a className="nav-link" target="_blank" rel="noreferrer" href={`https://www.airbnb.fr/s/${encodeURIComponent(selectedRace.location)}/homes`}>🏠 Dodo</a>
-              </div>
-              
-              <button 
-                onClick={() => setSelectedRace(null)} 
-                style={{ 
-                  width: '100%', 
-                  padding: '15px', 
-                  background: isPast ? '#333' : 'var(--primary)', 
-                  color: isPast ? '#888' : 'white', 
-                  border: 'none', 
-                  borderRadius: '12px', 
-                  fontWeight: 'bold', 
-                  cursor: 'pointer',
-                  marginTop: '15px',
-                  textTransform: 'uppercase'
-                }}
-              >
-                Fermer
-              </button>
+            <div className="m-modal-map">
+              <iframe title="map" width="100%" height="180" style={{border:0}} src={`https://maps.google.com/maps?q=piste+bmx+${encodeURIComponent(selectedRace.location)}&output=embed`}></iframe>
             </div>
+
+            <div className="m-modal-grid">
+              <a href={`https://www.google.com/maps/dir/?api=1&destination=piste+bmx+${encodeURIComponent(selectedRace.location)}`} target="_blank" rel="noreferrer" className="m-action-btn maps">Maps</a>
+              <a href={`https://waze.com/ul?q=piste+bmx+${encodeURIComponent(selectedRace.location)}&navigate=yes`} target="_blank" rel="noreferrer" className="m-action-btn waze">Waze</a>
+              <a href={`https://www.airbnb.fr/s/${encodeURIComponent(selectedRace.location)}/homes`} target="_blank" rel="noreferrer" className="m-action-btn dodo">Dodo</a>
+            </div>
+            <button className="m-btn-close" onClick={() => setSelectedRace(null)}>Fermer</button>
           </div>
-        );
-      })()}
+        </div>
+      )}
     </div>
   );
 };
