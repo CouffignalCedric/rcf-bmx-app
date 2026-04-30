@@ -49,7 +49,7 @@ const App = () => {
 <InstallGuide />
 <header className="m-header">
 <img src={logoRCF} alt="RCF" className="m-logo-img" />
-<h1>RCF <span className="m-red">Fagnières</span></h1>
+<h1>RCFagnières <span className="m-red">Events</span></h1>
 </header>
 <div className="m-content">
 <div className="m-filter-row">
