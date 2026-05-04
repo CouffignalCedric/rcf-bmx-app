@@ -16,7 +16,7 @@ const App = () => {
     if (cat.includes('internationnal')) return '#8b5cf6'; // Violet
     if (cat.includes('national')) return '#ef4444'; // Rouge
     if (cat.includes('régional')) return '#3b82f6'; // Bleu
-    if (cat.includes('départemental')) return '#10b981'; // Vert
+    if (cat.includes('evénement')) return '#10b981'; // Vert
     return '#64748b'; // Gris par défaut
   };
   useEffect(() => {
