@@ -45,7 +45,7 @@ const App = () => {
   const categories = ['Tous', ...new Set(races.map(r => r.category))];
   return (
     <div className="m-app">
-      {/*  LE GUIDE ICI */}
+      {/*  LE GUIDE Installation */}
       <InstallGuide />
       <header className="m-header">
         <img src={logoRCF} alt="RCF" className="m-logo-img" />
