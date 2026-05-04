@@ -62,7 +62,14 @@ const App = () => {
         </div>
         {loading ? <div className="m-loader">Chargement...</div> : (
           filteredRaces.map((race, index) => (
-            <div key={index} className="m-event-card" onClick={() => setSelectedRace(race)} style={{ borderLeft: `6px solid ${getCategoryColor(race.category)}` }}>
+            <div key={index} className="m-event-card" onClick={() => setSelectedRace(race)} style={{ borderLeft: `6px solid ${getCategoryColor(race.category)}`,position: 'relative' }}>
+              {/* PETIT INDICATEUR D'INFORMATION */}
+  {race.information && race.information.trim() !== "" && (
+    <div className="m-info-indicator" title="Information disponible">
+      i
+    </div>
+  )}
+              
               <div className="m-event-date">
                 <span className="m-event-day">{new Date(race.date).getDate()}</span>
                 <span className="m-event-month" style={{ color: getCategoryColor(race.category) }}>
@@ -95,11 +102,17 @@ const App = () => {
             <p className="m-modal-sub">
               {new Date(selectedRace.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
-            {selectedRace.information && (
-              <div className="m-modal-description">
-                <strong>Information :</strong> {selectedRace.information}
-              </div>
-            )}
+           {selectedRace.information && (
+  <div className="m-modal-description">
+    <div className="m-info-header">
+      <span className="m-info-icon-small">i</span>
+      <strong>INFORMATION :</strong>
+    </div>
+    <div className="m-info-text">
+      {selectedRace.information}
+    </div>
+  </div>
+)}
             <div className="m-modal-map">
               <iframe
                 title="map"
